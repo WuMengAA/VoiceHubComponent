@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="GdX1yV4DZBDhF4rnXEloWe">
+<head data-page-node-id="GF1mIazfefic11OiPDkO0E">
+<meta charset="UTF-8" data-page-node-id="MHm9hWBMMay4EUrPLpTHBT">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="2oeGe8XLB6Op2yfvo7vsLi">
+<title>VoiceHub 校园广播站 · 使用说明（学生 / 管理员）</title>
+<style>
+  :root{
+    --bg:#fafbfc; --card:#fff; --ink:#1f2329; --sub:#5b6470; --line:#e3e7ee;
+    --brand:#6d4aff; --brand-soft:#f1ecff; --ok:#1a8a5a; --ok-soft:#eafaf0;
+    --warn:#b4690e; --warn-soft:#fdf3e7; --danger:#c0392b; --danger-soft:#fdecea;
+    --code-bg:#f3f5f8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1115; --card:#171a21; --ink:#e9edf3; --sub:#9aa4b2; --line:#2a2f3a;
+      --brand:#9b7dff; --brand-soft:#241f3d; --ok:#34d399; --ok-soft:#0f2a1f;
+      --warn:#fbbf24; --warn-soft:#2a2113; --danger:#f87171; --danger-soft:#2a1414;
+      --code-bg:#1b1f27;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.7;font-size:15px}
+  .wrap{max-width:820px;margin:0 auto;padding:28px 20px 64px}
+  h1{font-size:23px;margin:0 0 4px}
+  .subtitle{color:var(--sub);margin:0 0 8px;font-size:14px}
+  h2{font-size:18px;margin:0 0 10px;display:flex;align-items:center;gap:10px}
+  h2 .tag{font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px}
+  .tag.student{background:var(--brand-soft);color:var(--brand)}
+  .tag.admin{background:var(--ok-soft);color:var(--ok)}
+  h3{font-size:15px;margin:20px 0 8px}
+  p{margin:8px 0}
+  ul,ol{margin:8px 0;padding-left:22px}
+  li{margin:6px 0}
+  code{background:var(--code-bg);padding:2px 6px;border-radius:5px;font-family:Consolas,Menlo,monospace;font-size:13px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-top:18px}
+  .note{border-left:4px solid var(--brand);background:var(--brand-soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0;font-size:14px}
+  .note.ok{border-color:var(--ok);background:var(--ok-soft)}
+  .note.warn{border-color:var(--warn);background:var(--warn-soft)}
+  .note.danger{border-color:var(--danger);background:var(--danger-soft)}
+  .note b{display:block;margin-bottom:4px}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--brand-soft);color:var(--brand);font-weight:600}
+  footer{color:var(--sub);font-size:12.5px;margin-top:28px;border-top:1px solid var(--line);padding-top:12px}
+  a{color:var(--brand)}
+</style>
+</head>
+<body data-page-node-id="8QRHrHCCOzDKoqCTQ909VO">
+<div class="wrap" data-page-node-id="m14FyTdXYdWlxI6P0VPMpi">
+
+  <h1 data-page-node-id="xjcs7tJua0AKTXR9A08tG1">VoiceHub 校园广播站 · 使用说明</h1>
+  <p class="subtitle" data-page-node-id="1IHdOyVF8bbbzsFzv67PRi">教室大屏「正在播放」实时显示 — 给学生和音乐管理员</p>
+
+  <div class="note" data-page-node-id="s2rPAqVJi6jRGKYwFIEBH6">
+    <b data-page-node-id="bzdhBJDGUQZF7UNdb6MFyl">一句话</b>
+    音乐管理员在后台放歌时，教室里的大屏会实时显示「正在播放哪首、播到哪了、下一首是什么、多少人在听」。本功能<strong data-page-node-id="Gv2doLUs0vBAxjPyXAtFUD">只显示、不点歌、不切歌、不写任何数据</strong>。
+  </div>
+
+  <!-- ============ 学生 ============ -->
+  <div class="panel" data-page-node-id="yOlvxWM0rW4yvb9zLVd4uL">
+    <h2 data-page-node-id="JEowdBwAZsRZQOo70Aj8LL"><span class="tag student" data-page-node-id="hcMXkeCdvmaRgHgywrcmwr">给学生</span>你什么都不用操作</h2>
+    <p data-page-node-id="FpotvYDjzrxqTBKXJ3vk1B">大屏由管理员统一控制。你只需要看，不需要点任何按钮。</p>
+
+    <h3 data-page-node-id="XTLxhTr4fnYcXLVyoSPfAw">大屏上你会看到什么</h3>
+    <p data-page-node-id="eAWH2RM4ZfWNYGKABvtxh4">当管理员正在广播、且广播的曲目正好是当前大屏显示的排期曲目时，当前曲目卡片右侧会多出一排实时信息：</p>
+    <ul data-page-node-id="gtqb9jOrGlkt7EzUNEHjp5">
+      <li data-page-node-id="jzoy6ADAbnBkMkuQS1UFev"><b data-page-node-id="4EUcsjw2B4wE98G5CEqWK5">脉动绿点 +「正在播放」</b>：此刻正在播放这首（绿点一跳一跳 = 播放中；静止 = 已暂停）。</li>
+      <li data-page-node-id="kjEt0A9D7C95mbzt0sjhjN"><b data-page-node-id="ZsUVSyHcGwxGKC8MJ3ifRp">进度条</b>：这首播到哪了，会自己往前走。</li>
+      <li data-page-node-id="XUXfTpOTJep0OhBrNgV9oG"><b data-page-node-id="qDDTaqINSCGDpsWXpzqsFf">「接下来：XXX」</b>：连播队列里的下一首。</li>
+      <li data-page-node-id="Tw51GfA6SI3p9p0Vs9eoHG"><b data-page-node-id="52hQ7uZrfdJjK0eorAWsGC">「N 人在听」</b>：当前在线收听的人数。</li>
+    </ul>
+
+    <h3 data-page-node-id="b4AeRkk3TUSIFmvX7oQwrQ">看不到这些，正常吗？</h3>
+    <div class="note ok" data-page-node-id="Y8qfqlpTumpcbeSvoe3LTa">
+      <b data-page-node-id="87hN0VqWggrdY4L36YPQW0">绝大多数情况：正常，不是坏了</b>
+      这些元素<strong data-page-node-id="bqQLJbeAE9OhzPn5PvYh7i">只在管理员正在广播、且广播的正是当前这张卡片对应的时段</strong>时才出现。以下情形都看不到，属于预期：
+      <ul style="margin-top:6px" data-page-node-id="HwU4nDGyXdkv6ecQ6ZGk3D">
+        <li data-page-node-id="Tm54UyS1UHazeaqGjAefAU">管理员此刻没有在广播（课间、还没到点）。</li>
+        <li data-page-node-id="vmP33oPhx5zHfvx0Jh8LM6">广播的是别的时段的曲目，不是当前这张卡片。</li>
+        <li data-page-node-id="WaKl5i7UiGjbmSGbIkAhOS">当天还没有排期，或当前显示的是「未来最近排期」。</li>
+      </ul>
+      遇到上面这些，<strong data-page-node-id="jFRMtEThaPphVGnnyAvGyi">不用报修，等广播开始即可</strong>。
+    </div>
+
+    <h3 data-page-node-id="0THgrLAQQhWTI4SwadRBQp">什么时候需要反馈</h3>
+    <ul data-page-node-id="QhibcjMa4rvC1yXCdAUY1e">
+      <li data-page-node-id="KBkJ4fDKeVr01P7h2iyacq">大屏显示的歌名 / 进度，和<strong data-page-node-id="rZgJz2FkrH3yW9te6bAhZC">实际听到的长期对不上</strong>（偶尔一两秒偏差不算）。</li>
+      <li data-page-node-id="wcWkkPILzc7cEPciKeOh0u">管理员明明在广播，全班大屏却长时间完全不显示。</li>
+    </ul>
+    <p data-page-node-id="nd1FfDSB3wRHQjl0OnIGXi">把现象告诉音乐管理员即可，由管理员排查（见下方管理员篇）。</p>
+  </div>
+
+  <!-- ============ 管理员 ============ -->
+  <div class="panel" data-page-node-id="RbU3qqkcIilMaDGL05XqO4">
+    <h2 data-page-node-id="afd6vt5JzhfDndIbUsqbcO"><span class="tag admin" data-page-node-id="aeKSge3f0i5c4HHvL0nsiR">给管理员</span>开箱即用，一般不用动</h2>
+    <p data-page-node-id="B3wkl6qjgwv4IWWiUA7pOp">插件装好后<strong data-page-node-id="GHFUultTCo2st78LMt3V2O">默认就能用</strong>：开关已开、API 地址已填。只在下面两种情况需要你进设置。</p>
+
+    <h3 data-page-node-id="Sq7fQK6MFAAVt39CHeIRfE">要确认的两件事</h3>
+    <ol data-page-node-id="Ujyhxrb3JapM42XY9xInSD">
+      <li data-page-node-id="CVk4tfHxgl1C5L8dMbBA0X">
+        <b data-page-node-id="ebwFYNwnCvcwFzqEUA2wgA">API 地址填对</b>（设置项 <code data-page-node-id="7gbrukRGCqlkmZKIEY1vMM">ApiUrl</code>）<br data-page-node-id="Qho9eOWuBmRAqUqBskcBve">
+        默认是 <code data-page-node-id="0OVjbNMInfMcFO1EAkb85s">https://voicehub.lao-shui.top/api/songs/public</code>。如果你们的部署改了域名或路径，要填到<strong data-page-node-id="lkoxFLekMrMgRyg02cwEGZ">能正常拿到排期数据的那个地址</strong>。
+        <div class="note warn" data-page-node-id="oACAazLpewFfhPpwy0VJtE">
+          <b data-page-node-id="YlrRN38oU3EAx3zpJ6q01h">关键约束（务必注意）</b>
+          实时广播通道的域名，是从这个 API 地址<strong data-page-node-id="QJEFxnlHAKldVnYBecYLEN">自动推导</strong>的（取同一来源）。也就是说：<strong data-page-node-id="4mob9RKskTGqcBFOtcOhfJ">排期接口和广播接口必须在同一个域名下</strong>。
+          例：API 地址是 <code data-page-node-id="2A7KrQk8RBXR1SB6vfhAHe">https://voicehub.xxx.com/.../public</code>，广播就会去连 <code data-page-node-id="EwYb6XgSbjp0hZbRIRMm5v">https://voicehub.xxx.com/api/music/websocket</code>。
+          如果两者跨域 / 跨端口，大屏会收不到实时状态。
+        </div>
+      </li>
+      <li data-page-node-id="bLGXYDgZbE1PmMPvKH25CH">
+        <b data-page-node-id="EGgL6dbuXlzg0HQsvr92Mk">「启用正在播放」开关已打开</b>（设置项 <code data-page-node-id="C0QIjAnxEmfSu6dNx2yGFf">EnableNowPlaying</code>）<br data-page-node-id="ynk8PPopo0WztFMGery4vx">
+        默认开启。只有你想彻底关掉大屏实时显示时才取消勾选。
+      </li>
+    </ol>
+
+    <h3 data-page-node-id="8ZDn1t27aeHFqoGUhU3CrU">改动后怎么做</h3>
+    <ul data-page-node-id="NjnSPk7jOnJzHKRCgcKncC">
+      <li data-page-node-id="10zwZdGGXFYAFdrCSb0dFz">改完点<strong data-page-node-id="ULnhBjwGku4ri46JJBM0f2">保存</strong>，必要时重启 ClassIsland 让设置生效。</li>
+      <li data-page-node-id="caS7btBEJ3ldehYoFvKcYG"><b data-page-node-id="5tmOAB55AUSyEWTdDVZD8m">怎么确认生效</b>：等有任意一次广播开始，大屏当前卡片出现脉动绿点，就说明链路通了。</li>
+    </ul>
+
+    <h3 data-page-node-id="1gIiv7zt7JcwHbqHEQSh4J">大屏不显示实时信息？按这个顺序查</h3>
+    <table data-page-node-id="RncZIKS0FeaG0ZZVtXZVu9">
+      <tr data-page-node-id="w5f7ZX5LSzpmXUH7CD5ClK"><th data-page-node-id="WNP9GHrf8KzkqiSxAlYkrb">顺序</th><th data-page-node-id="HmJNEjNWzIiIf927m7voHZ">最可能的原因</th><th data-page-node-id="RP68Ea6eykylk0XqyvMTkX">怎么判断 / 处理</th></tr>
+      <tr data-page-node-id="9qg3ax72P6Stis6nMn7aeL">
+        <td data-page-node-id="rJ3DrRmGuMFVT1UFWOS1sG">1</td>
+        <td data-page-node-id="plwmXV7wEfmHE9K1aOLkyK"><b data-page-node-id="FKXfJbUMm9FwyxTCqy94Zt">管理员当前没有在广播</b></td>
+        <td data-page-node-id="anEjk3KATFTdiDRRq8QOJ6">最常见。没广播，大屏本就不显示。先确认后台正在播放。</td>
+      </tr>
+      <tr data-page-node-id="EIvMzv8SLMSK2H4aqq4KsW">
+        <td data-page-node-id="hDFCw9CbhGYznYzy5Xcj1U">2</td>
+        <td data-page-node-id="dfShTZp0hoRMxe4D02SVBK"><b data-page-node-id="A1owjAeOXcPFLpjYacKHji">API 地址与广播接口不同域</b></td>
+        <td data-page-node-id="45ZOxAMDGpWxRO2f5ZKW0q">核对 <code data-page-node-id="DomQagcVotpNaehdTvNY2a">ApiUrl</code> 的域名，必须和广播接口同一来源（见上方关键约束）。</td>
+      </tr>
+      <tr data-page-node-id="ouXxwJABJaRHnWIgXSQyf8">
+        <td data-page-node-id="gAbp6L5vFmoJDJ2yz0XLjh">3</td>
+        <td data-page-node-id="prWTJ4viB1h0UV0UN9ASQq"><b data-page-node-id="Kc9FktryfGZEpa4RWaBSNv">「启用正在播放」开关被关了</b></td>
+        <td data-page-node-id="sIfUCDLycXFOrmYoOWmInV">进设置确认 <code data-page-node-id="hKoslcHC6ytowjnAWnPezL">EnableNowPlaying</code> 是勾选状态。</td>
+      </tr>
+      <tr data-page-node-id="GASDenZ1LHlR9qyaGkxnNa">
+        <td data-page-node-id="kiNGIohmSHs8kEdr5CZgXP">4</td>
+        <td data-page-node-id="FV7no2lpsvEpLAFtg7B0Uw"><b data-page-node-id="1DWbtbxhoVdpeYdtQIjVyu">网络不通 / 服务端不可达</b></td>
+        <td data-page-node-id="vIFatXSA6olxzAZVAqXHEc">插件会自动重连（间隔 1s→2s→4s…最长 30s），并每 30s 轮询兜底。短暂抖动会自动恢复，不影响主界面。</td>
+      </tr>
+      <tr data-page-node-id="u3bYUKgjnT5cntcFUiWP2N">
+        <td data-page-node-id="Z0x0xxwrhV6OafBceCyEb1">5</td>
+        <td data-page-node-id="tJhClEiJJIfxq4RPMayhwv"><b data-page-node-id="ufwGOKLces8FeLX1jhT2iz">以上都正常但仍异常</b></td>
+        <td data-page-node-id="EDuFYI62wAYhBC4m6fQ7Hr">查看 ClassIsland 日志里 <code data-page-node-id="szqBAXuQWHmva4g9BTuIOr">BroadcastStateClient</code> 相关条目（连接失败 / 轮询失败都有记录），按日志进一步排查。</td>
+      </tr>
+    </table>
+
+    <div class="note danger" data-page-node-id="vDGB46z5onjwjAhIBUgnyk">
+      <b data-page-node-id="EQj2fzvb8jRKYjEn43IQme">红线：不要做的事</b>
+      <ul style="margin:6px 0" data-page-node-id="rYXNG6TfGaowSwEkgeURg9">
+        <li data-page-node-id="yAOkBjIQhLeO63VCXuCRdS"><b data-page-node-id="hDImhPYNqdUo87smBGPmR5">不要把广播通道和排期接口拆到不同域名</b>——实时状态会全部收不到。</li>
+        <li data-page-node-id="fBe8DCWrCQ587HKDYe2RsL"><b data-page-node-id="3qpeecFf2tYGholsgqTZDe">不要把这个插件改成能写数据</b>——它只是广播状态的只读展示，任何点歌 / 切歌的写逻辑都违反设计。</li>
+        <li data-page-node-id="aSmlDMKeSKLktHztk0K0kt">如果要改服务端接口的路径或字段名，<strong data-page-node-id="UXFarUw9nUvQrVSwxZarR4">必须同步检查集控侧</strong>（详见开发者文档的红线一节），否则集控大屏会读不到。</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer data-page-node-id="u5EvzmJOgkF2oT4yXeoBGL">
+    配套开发者文档：<code data-page-node-id="FN299senVgEHulgFQ624od">docs/now-playing-feature.html</code>（代码结构、数据契约、改动清单）。
+    本文档面向使用者，不涉及代码。
+  </footer>
+
+</div>
+</body>
+</html>

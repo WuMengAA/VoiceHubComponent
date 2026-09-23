@@ -62,6 +62,9 @@ git merge upstream/v2
 因此本工程改动如果动了 **API 路径或字段名**，必须同步检查集控侧的
 `StelarithSongBoard.cs` 与 `ext/voicehub-sync/voicehub-adapter.mjs`。
 
+> 📌 要做「教室大屏显示正在播放的那一条 + 进度」这类需求，先读
+> **`AI-必读-广播正在播放-桥接提示词.md`**（服务端字段、SSE 通道、1 小时刷新陷阱、验收清单都在里面）。
+
 ## 6. 构建
 
 ```bash

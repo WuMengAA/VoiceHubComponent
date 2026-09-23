@@ -111,6 +111,17 @@ namespace VoiceHubComponent
         private readonly DispatcherTimer _loadingGuardTimer;
         private readonly TimeSpan _loadingTimeout = TimeSpan.FromSeconds(60);
 
+        // ===== 广播「正在播放」叠加层（服务端权威状态，独立后台通道） =====
+        private readonly BroadcastStateClient _broadcastClient;
+        private readonly DispatcherTimer _broadcastTickTimer;
+        private BroadcastUpdate? _currentBroadcast;
+        private int _currentScheduleId = -1;
+        private int _currentSongId = -1;
+        private string? _currentScheduleDate;
+        private bool _broadcastOverlayActive;
+        private double _broadcastAnchorPosition;
+        private DateTime _broadcastAnchorAt = DateTime.MinValue;
+
         public VoiceHubControl()
         {
             InitializeComponent();
@@ -125,6 +136,19 @@ namespace VoiceHubComponent
 
             // 设置HTTP客户端超时
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
+
+            // 广播「正在播放」叠加层：独立后台通道（SSE + 轮询），不干扰主刷新节奏。
+            // 默认按 EnableNowPlaying 开关决定是否显示，连接本身常驻。
+            _broadcastClient = new BroadcastStateClient(GetVoiceHubOrigin, _logger);
+            _broadcastClient.BroadcastChanged += OnBroadcastStateChanged;
+            _broadcastClient.Start();
+
+            _broadcastTickTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _broadcastTickTimer.Tick += (_, _) => UpdateBroadcastProgress();
+            _broadcastTickTimer.Start();
 
             // 初始化定时器，正常情况下1小时刷新一次，失败后1分钟检查一次
             _refreshTimer = new DispatcherTimer
@@ -218,6 +242,9 @@ namespace VoiceHubComponent
             _refreshTimer.Stop();
             _lyricTimer.Stop();
             _loadingGuardTimer.Stop();
+            _broadcastTickTimer.Stop();
+            _broadcastClient.BroadcastChanged -= OnBroadcastStateChanged;
+            _broadcastClient.Dispose();
             StopCoverTransition(true);
             _httpClient.Dispose();
         }
@@ -2039,6 +2066,12 @@ namespace VoiceHubComponent
             ContentText = _scheduleSummaryText;
             _currentPlaybackKey = null;
             _lyricTimer.Interval = TimeSpan.FromSeconds(1);
+
+            // 卡片收起时清空广播叠加层上下文
+            _currentScheduleId = -1;
+            _currentSongId = -1;
+            _currentScheduleDate = null;
+            HideBroadcastOverlay();
         }
 
         private void UpdateNowPlaying(ScheduledSongPlayback entry)
@@ -2072,6 +2105,12 @@ namespace VoiceHubComponent
 
             NowPlayingArtist.Text = string.Join(" · ", artistParts);
             _ = LoadCoverForSongAsync(song.Cover, key);
+
+            // 记录当前卡片命中的排期项，供广播状态匹配使用
+            _currentScheduleId = entry.Item.Id;
+            _currentSongId = entry.Item.Song.Id;
+            _currentScheduleDate = entry.Item.PlayDate;
+            RefreshBroadcastOverlay();
         }
 
         private void UpdatePresenterFrame(ScheduledSongPlayback entry, TimeSpan position)
@@ -2100,6 +2139,136 @@ namespace VoiceHubComponent
             var positionMs = position.TotalMilliseconds;
             LyricsPresenter.ShowLines(entry.Lyrics, entry.LyricFormat, positionMs);
             _lyricTimer.Interval = LyricsPresenter.GetNextRefreshDelay(entry.Lyrics, positionMs);
+        }
+
+        // ========== 广播「正在播放」叠加层 ==========
+
+        /// <summary>
+        /// 广播通道回调（可能来自后台线程），切回 UI 线程后重算叠加层。
+        /// </summary>
+        private void OnBroadcastStateChanged(BroadcastUpdate update)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                _currentBroadcast = update;
+                RefreshBroadcastOverlay();
+            });
+        }
+
+        /// <summary>
+        /// 依据当前卡片命中的排期项与服务端广播状态，决定是否显示「正在播放」叠加层。
+        /// </summary>
+        private void RefreshBroadcastOverlay()
+        {
+            var update = _currentBroadcast;
+            var b = update?.Broadcast;
+
+            // 总开关关闭：一律不显示
+            if (!Settings.EnableNowPlaying)
+            {
+                HideBroadcastOverlay();
+                return;
+            }
+
+            // 匹配规则：优先 scheduleId 精确命中；缺失时退化为 songId + playDate 同配。
+            var matched = false;
+            if (b != null && _currentScheduleId > 0)
+            {
+                if (b.ScheduleId.HasValue)
+                {
+                    matched = b.ScheduleId.Value == _currentScheduleId;
+                }
+                else if (!string.IsNullOrEmpty(_currentScheduleDate))
+                {
+                    matched = b.SongId == _currentSongId &&
+                              string.Equals(b.PlayDate, _currentScheduleDate, StringComparison.Ordinal);
+                }
+            }
+
+            if (!matched)
+            {
+                HideBroadcastOverlay();
+                return;
+            }
+
+            // 命中：以最新快照为锚点，进度条本地每秒外推，收到新快照即纠偏
+            _broadcastAnchorPosition = b!.Position;
+            _broadcastAnchorAt = DateTime.UtcNow;
+            _broadcastOverlayActive = true;
+
+            NowPlayingOverlay.IsVisible = true;
+            NowPlayingBadge.IsVisible = true;
+            NowPlayingPulse.Classes.Set("pulsing", b.IsPlaying);
+            NowPlayingProgress.IsVisible = true;
+            NowPlayingProgress.Value = b.Duration > 0 ? Math.Clamp(b.Position / b.Duration, 0, 1) : 0;
+
+            if (update!.NextUp != null)
+            {
+                NowPlayingNext.Text = $"接下来：{update.NextUp.Title}";
+                NowPlayingNext.IsVisible = true;
+            }
+            else
+            {
+                NowPlayingNext.IsVisible = false;
+            }
+
+            if (update.Listeners > 0)
+            {
+                NowPlayingListeners.Text = $"{update.Listeners} 人在听";
+                NowPlayingListeners.IsVisible = true;
+            }
+            else
+            {
+                NowPlayingListeners.IsVisible = false;
+            }
+        }
+
+        private void HideBroadcastOverlay()
+        {
+            _broadcastOverlayActive = false;
+            if (NowPlayingOverlay == null)
+            {
+                return;
+            }
+
+            NowPlayingOverlay.IsVisible = false;
+            NowPlayingBadge.IsVisible = false;
+            NowPlayingProgress.IsVisible = false;
+            NowPlayingNext.IsVisible = false;
+            NowPlayingListeners.IsVisible = false;
+            NowPlayingPulse?.Classes.Set("pulsing", false);
+        }
+
+        /// <summary>
+        /// 每秒本地外推进度；并负责暂停态冻结、掉线/停播自愈（快照超过 95 秒未更新则移除叠加层）。
+        /// </summary>
+        private void UpdateBroadcastProgress()
+        {
+            if (!_broadcastOverlayActive || _currentBroadcast?.Broadcast == null)
+            {
+                return;
+            }
+
+            var b = _currentBroadcast.Broadcast;
+            if (!b.IsPlaying)
+            {
+                // 暂停态：保留标记，进度冻在 position，停止脉动
+                NowPlayingPulse.Classes.Set("pulsing", false);
+                NowPlayingProgress.Value = b.Duration > 0 ? Math.Clamp(b.Position / b.Duration, 0, 1) : 0;
+                return;
+            }
+
+            var stale = DateTime.UtcNow - _currentBroadcast.LastReceivedUtc;
+            if (stale > TimeSpan.FromSeconds(95))
+            {
+                // 超过 95 秒无新快照，视为掉线/停播，移除叠加层，回到原界面
+                HideBroadcastOverlay();
+                return;
+            }
+
+            NowPlayingPulse.Classes.Set("pulsing", true);
+            var pos = _broadcastAnchorPosition + (DateTime.UtcNow - _broadcastAnchorAt).TotalSeconds;
+            NowPlayingProgress.Value = b.Duration > 0 ? Math.Clamp(pos / b.Duration, 0, 1) : 0;
         }
 
         // ========== 封面显示 ==========

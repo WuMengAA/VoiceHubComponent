@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 .vscode
 .idea
+
+# AI 工作目录（本地记忆 / 自动化，不入库）
+.workbuddy/

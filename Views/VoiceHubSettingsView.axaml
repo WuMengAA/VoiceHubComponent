@@ -77,6 +77,17 @@
                 </fluent:SettingsExpander.Footer>
             </fluent:SettingsExpander>
 
+            <fluent:SettingsExpander Header="广播正在播放"
+                                     Description="从服务端实时显示「正在播放」徽标、进度条、接下来与在线人数。默认开启，关闭后界面与改动前一致。"
+                                     IconSource="{ci:FluentIconSource &#xE714;}">
+                <fluent:SettingsExpander.Footer>
+                    <CheckBox x:Name="EnableNowPlayingCheckBox"
+                              IsChecked="{Binding EnableNowPlaying}"
+                              Content="显示正在播放叠加层"
+                              VerticalAlignment="Center"/>
+                </fluent:SettingsExpander.Footer>
+            </fluent:SettingsExpander>
+
             <fluent:SettingsExpander Header="固定开始时间"
                                      Description="当天第一首排期歌曲开始播放的时间，支持 HH:mm 或 HH:mm:ss。"
                                      IconSource="{ci:FluentIconSource &#xE823;}">

@@ -23,6 +23,7 @@ namespace VoiceHubComponent.Models
         private bool _showRomanization = false;
         private bool _wordByWord = true;
         private bool _enableLyricUpgrade = true;
+        private bool _enableNowPlaying = true;
         private bool _isLoaded = false;
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -273,6 +274,28 @@ namespace VoiceHubComponent.Models
             }
         }
 
+        /// <summary>
+        /// 是否显示服务端广播「正在播放」叠加层。默认开启；关闭则界面与改动前完全一致，出错时静默降级。
+        /// </summary>
+        public bool EnableNowPlaying
+        {
+            get
+            {
+                EnsureLoaded();
+                return _enableNowPlaying;
+            }
+            set
+            {
+                EnsureLoaded();
+                if (_enableNowPlaying != value)
+                {
+                    _enableNowPlaying = value;
+                    OnPropertyChanged();
+                    SaveSettings();
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public VoiceHubSettings()
@@ -368,6 +391,11 @@ namespace VoiceHubComponent.Models
                     if (jsonDocument.RootElement.TryGetProperty("EnableLyricUpgrade", out var enableLyricUpgradeElement))
                     {
                         _enableLyricUpgrade = enableLyricUpgradeElement.GetBoolean();
+                    }
+
+                    if (jsonDocument.RootElement.TryGetProperty("EnableNowPlaying", out var enableNowPlayingElement))
+                    {
+                        _enableNowPlaying = enableNowPlayingElement.GetBoolean();
                     }
                 }
             }

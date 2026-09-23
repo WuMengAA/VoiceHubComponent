@@ -89,6 +89,20 @@ namespace VoiceHubComponent.Models
         public PlayTimeInfo? PlayTime { get; set; }
 
         /// <summary>
+        /// 【新增读取字段，不破坏旧契约】逐条排期是否为音乐管理员正在播放的当前曲目。
+        /// 老服务端无此字段时反序列化为 false，等同于“没有广播”。
+        /// </summary>
+        [JsonPropertyName("isPlaying")]
+        public bool IsPlaying { get; set; }
+
+        /// <summary>
+        /// 【新增读取字段，不破坏旧契约】取得响应当刻已播放到的秒数；未在播为 null。
+        /// 老服务端无此字段时反序列化为 null。
+        /// </summary>
+        [JsonPropertyName("broadcastPosition")]
+        public double? BroadcastPosition { get; set; }
+
+        /// <summary>
         /// 获取播放日期的DateTime对象
         /// </summary>
         public DateTime GetPlayDateTime()
@@ -248,5 +262,49 @@ namespace VoiceHubComponent.Models
         /// 错误消息
         /// </summary>
         public string ErrorMessage { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 服务端广播权威状态（GET /api/music/broadcast 的 broadcast 字段 / SSE broadcast_state 的 data）。
+    /// 全部为只读展示字段；broadcast 为 null 表示当前无广播（或播控总开关关闭）。
+    /// </summary>
+    public class BroadcastState
+    {
+        [JsonPropertyName("songId")] public int SongId { get; set; }
+        [JsonPropertyName("scheduleId")] public int? ScheduleId { get; set; }
+        [JsonPropertyName("playDate")] public string? PlayDate { get; set; }
+        [JsonPropertyName("sequence")] public int Sequence { get; set; }
+        [JsonPropertyName("title")] public string? Title { get; set; }
+        [JsonPropertyName("artist")] public string? Artist { get; set; }
+        [JsonPropertyName("cover")] public string? Cover { get; set; }
+        [JsonPropertyName("musicPlatform")] public string? MusicPlatform { get; set; }
+        [JsonPropertyName("musicId")] public string? MusicId { get; set; }
+        [JsonPropertyName("duration")] public double Duration { get; set; }
+        [JsonPropertyName("position")] public double Position { get; set; }
+        [JsonPropertyName("isPlaying")] public bool IsPlaying { get; set; }
+        [JsonPropertyName("publisherName")] public string? PublisherName { get; set; }
+    }
+
+    /// <summary>
+    /// 连播队列里的「下一首」摘要（快照 nextUp；无连播时为 null）。
+    /// </summary>
+    public class BroadcastNextUp
+    {
+        [JsonPropertyName("songId")] public int SongId { get; set; }
+        [JsonPropertyName("title")] public string? Title { get; set; }
+        [JsonPropertyName("artist")] public string? Artist { get; set; }
+        [JsonPropertyName("duration")] public double Duration { get; set; }
+    }
+
+    /// <summary>
+    /// GET /api/music/broadcast 的完整快照。
+    /// </summary>
+    public class BroadcastSnapshot
+    {
+        [JsonPropertyName("broadcast")] public BroadcastState? Broadcast { get; set; }
+        [JsonPropertyName("nextUp")] public BroadcastNextUp? NextUp { get; set; }
+        [JsonPropertyName("listeners")] public int Listeners { get; set; }
+        [JsonPropertyName("baselineReleased")] public bool BaselineReleased { get; set; }
+        [JsonPropertyName("serverTime")] public long ServerTime { get; set; }
     }
 }

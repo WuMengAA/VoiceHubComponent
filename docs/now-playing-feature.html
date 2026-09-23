@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoiceHubComponent · 教室大屏「正在播放」叠加层 · 开发者说明</title>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1f2329; --muted:#6b7280; --line:#d0d7de;
+    --accent:#2f6fed; --accent-soft:#e8f0fe;
+    --warn:#c0392b; --warn-soft:#fdecea;
+    --ok:#1a7f37; --ok-soft:#eafaf0;
+    --block:#f6f8fa;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1115; --fg:#e9edf3; --muted:#9aa4b2; --line:#2a2f3a;
+      --accent:#6ea8fe; --accent-soft:#16233d;
+      --warn:#f87171; --warn-soft:#2a1414;
+      --ok:#34d399; --ok-soft:#0f2a1f;
+      --block:#171a21;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px;background:var(--bg);color:var(--fg);
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.65;font-size:15px}
+  .wrap{max-width:900px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px}
+  .lead{color:var(--muted);margin:0 0 4px}
+  h2{font-size:19px;margin:34px 0 12px;padding-left:10px;border-left:4px solid var(--accent)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--accent)}
+  p{margin:8px 0}
+  ul,ol{margin:8px 0;padding-left:22px}
+  li{margin:5px 0}
+  code{background:var(--block);padding:1px 6px;border-radius:5px;font-family:Consolas,Menlo,monospace;font-size:13px}
+  pre{background:var(--block);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow:auto;font-size:13px;line-height:1.55}
+  pre code{background:none;padding:0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--block)}
+  .card{background:var(--block);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+  .redline{background:var(--warn-soft);border-color:#f0b4ad}
+  .okline{background:var(--ok-soft);border-color:#aedcbe}
+  .noteline{background:var(--accent-soft);border-color:#b9d2fb}
+  .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px}
+  .tag.new{background:var(--accent-soft);color:var(--accent)}
+  .tag.ok{background:var(--ok-soft);color:var(--ok)}
+  footer{margin-top:36px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>教室大屏「正在播放」叠加层 — 开发者说明</h1>
+  <p class="lead">VoiceHubComponent（ClassIsland 校园广播站点歌排期插件）· 新增功能的技术记录</p>
+
+  <div class="card okline">
+    <p><span class="tag ok">核心约束</span> 只读叠加层：把服务端音乐管理员的权威广播状态实时显示到当日排期卡片，<b>不写任何数据</b>。新增字段均为<strong>新增读取</strong>，<strong>不改动任何既有字段名 / 接口路径</strong>；未升级 <code>ClassIsland.PluginSdk</code>、未引入新 NuGet 依赖。</p>
+  </div>
+
+  <!-- 1. 实现概览 -->
+  <h2>一、实现概览</h2>
+  <p>新增一条<strong>独立后台通道</strong>专门拉取播控状态，与既有的主刷新（排期 + 歌词刷新）完全解耦，互不干扰：</p>
+  <ul>
+    <li><b>拉取</b>：<code>Services/BroadcastStateClient.cs</code> 后台线程，SSE（<code>GET /api/music/websocket</code>，事件 <code>broadcast_state</code>）为主，<code>GET /api/music/broadcast</code> 每 30s 轮询兜底；断线指数退避重连（1s→2s→4s…封顶 30s）。</li>
+    <li><b>匹配</b>：广播快照的 <code>scheduleId</code> 命中当前卡片的 <code>SongItem.Id</code>；缺失时退化为 <code>songId + playDate</code> 同配。</li>
+    <li><b>渲染</b>：命中且正在播放时，在 <code>NowPlayingPanel</code> 第二行叠加脉动徽标 / 进度条 / 接下来 / 在线人数；停播、掉线（&gt;95s 无快照）、不匹配时完全不显示，界面与改动前一致。</li>
+    <li><b>进度</b>：本地每秒外推 <code>position</code>，仅偶尔快照纠偏，绝不每秒发请求。</li>
+  </ul>
+
+  <!-- 2. 数据契约 -->
+  <h2>二、数据契约（仅新增读取）</h2>
+  <p>插件只<strong>读</strong>下列字段，不发送任何写请求。后端对接或改动接口时按此对齐。</p>
+
+  <h3>2.1 排期接口 <code>GET /api/songs/public</code>（逐条）</h3>
+  <table>
+    <tr><th>新增字段</th><th>类型</th><th>说明</th></tr>
+    <tr><td><code>isPlaying</code></td><td>bool</td><td>该排期项是否正在播放；老服务端无此字段默认 false（天然兼容）。</td></tr>
+    <tr><td><code>broadcastPosition</code></td><td>double?</td><td>已播秒数；无则 null。</td></tr>
+  </table>
+
+  <h3>2.2 广播接口 <code>GET /api/music/broadcast</code> 与 SSE <code>broadcast_state</code></h3>
+  <table>
+    <tr><th>字段（位于 <code>broadcast</code> 对象内）</th><th>类型</th><th>说明</th></tr>
+    <tr><td><code>scheduleId</code></td><td>int?</td><td>排期 id，精确匹配首选；null 时退化匹配。</td></tr>
+    <tr><td><code>songId</code></td><td>int</td><td>歌曲 id，退化匹配用。</td></tr>
+    <tr><td><code>playDate</code></td><td>string?</td><td>播放日期 yyyy-MM-dd，退化匹配用。</td></tr>
+    <tr><td><code>title</code></td><td>string?</td><td>曲目标题。</td></tr>
+    <tr><td><code>duration</code></td><td>double</td><td>总时长（秒）。</td></tr>
+    <tr><td><code>position</code></td><td>double</td><td>当前进度（秒）。</td></tr>
+    <tr><td><code>isPlaying</code></td><td>bool</td><td>是否播放中。</td></tr>
+    <tr><td><code>nextUp.{songId,title,duration}</code></td><td>obj</td><td>下一首信息；<code>broadcast</code> 为 null 表示无广播。</td></tr>
+    <tr><td>根级 <code>listeners</code> / <code>baselineReleased</code></td><td>int / bool</td><td>在线人数 / 基准播控人是否掉线释放。</td></tr>
+  </table>
+
+  <!-- 3. 匹配逻辑 -->
+  <h2>三、命中匹配逻辑</h2>
+  <ol>
+    <li>收到广播快照且 <code>broadcast != null</code>。</li>
+    <li><code>scheduleId</code> 有值 → 与当前卡片 <code>SongItem.Id</code> 精确比较（同日同曲可能排两次，必须精确）。命中则显示叠加层。</li>
+    <li><code>scheduleId</code> 为 null → 退化为 <code>songId + playDate</code> 同配。</li>
+    <li>都不匹配 → 不显示（保持原界面）。</li>
+  </ol>
+
+  <!-- 4. UI 状态 -->
+  <h2>四、UI 状态一览</h2>
+  <table>
+    <tr><th>场景</th><th>叠加层表现</th></tr>
+    <tr><td>无广播 / 停播（<code>broadcast=null</code>）</td><td>完全不显示，界面与改动前一致。</td></tr>
+    <tr><td>命中且播放中（<code>isPlaying=true</code>）</td><td>脉动徽标 + 进度条每秒外推 + 「接下来」+「N 人在听」。</td></tr>
+    <tr><td>命中但暂停（<code>isPlaying=false</code>）</td><td>保留标记、停脉动、进度冻在 <code>position</code>（不隐藏，避免闪烁）。</td></tr>
+    <tr><td>掉线 / 快照过期（&gt;95s 无新快照）</td><td>移除叠加层，回到原界面。</td></tr>
+    <tr><td>非当日排期（显示未来最近排期）</td><td>不叠加任何「正在播放」标记。</td></tr>
+  </table>
+
+  <!-- 5. 容错 -->
+  <h2>五、容错机制</h2>
+  <ul>
+    <li>新接口 <code>404/403/超时</code> → 当「没有广播」处理，<b>绝不</b>影响排期与歌词既有显示。</li>
+    <li>SSE 断开 → 指数退避重连，期间轮询兜底；不进主刷新的网络错误状态机。</li>
+    <li>轮询失败只记日志，不污染主刷新；快照解析失败保留上一次有效状态。</li>
+    <li>进度条本地每秒 tick，绝不每秒发请求；服务端 <code>position</code> 自我外推，偶尔快照纠偏。</li>
+    <li>不升级 <code>ClassIsland.PluginSdk</code>、不引入新 NuGet 依赖；不向 VoiceHub 写任何数据。</li>
+  </ul>
+
+  <!-- 6. 红线 -->
+  <h2>六、红线：契约改动必须同步集控侧</h2>
+  <div class="card redline">
+    <p><span class="tag" style="background:var(--warn-soft);color:var(--warn)">红线</span> 一旦改动 <code>/api/songs/public</code> 的<strong>路径或字段名</strong>，必须同步检查集控侧两个文件（它们各自独立实现了同一份数据契约）：</p>
+    <ul>
+      <li><code>Stelarith-cims-eval\school-multimedia-control\ext\stelarith-classisland-plugin\StelarithSongBoard.cs</code></li>
+      <li><code>Stelarith-cims-eval\school-multimedia-control\ext\voicehub-sync\voicehub-adapter.mjs</code></li>
+    </ul>
+    <p>本次实现未触及既有路径 / 字段，故这两处暂无需改动。同理，集控侧若改契约，本插件也须回查。</p>
+  </div>
+
+  <!-- 7. 改动文件 -->
+  <h2>七、本次改动文件</h2>
+  <table>
+    <tr><th>文件</th><th>改动</th></tr>
+    <tr><td><code>Models/VoiceHubModels.cs</code></td><td><span class="tag new">新增</span> <code>SongItem.IsPlaying/BroadcastPosition</code>、<code>BroadcastState</code>、<code>BroadcastNextUp</code>、<code>BroadcastSnapshot</code>。全部新增只读字段。</td></tr>
+    <tr><td><code>Services/BroadcastStateClient.cs</code></td><td><span class="tag new">新增</span> SSE + 30s 轮询兜底 + 指数退避重连，后台线程；事件 <code>BroadcastChanged</code>。</td></tr>
+    <tr><td><code>VoiceHubControl.axaml.cs</code></td><td>接入客户端生命周期、按 scheduleId 匹配、本地外推进度、叠加层显隐；停播 / 掉线 / 不匹配时完全不显示。</td></tr>
+    <tr><td><code>VoiceHubControl.axaml</code></td><td>卡片改为两行，第二行为叠加层（默认隐藏），脉动用 Avalonia 内联动画。</td></tr>
+    <tr><td><code>Models/VoiceHubSettings.cs</code> + <code>Views/VoiceHubSettingsView.*</code></td><td><span class="tag ok">新增开关</span> <code>EnableNowPlaying</code>（默认开启，出错静默降级）。</td></tr>
+  </table>
+
+  <!-- 8. 构建与验证 -->
+  <h2>八、构建与本地验证</h2>
+  <div class="card">
+    <p><b>构建</b></p>
+    <pre><code>cd D:/Stelarith/Stelarith-voicehub-component
+dotnet build -c Release</code></pre>
+    <p>产出 <code>bin/Release/net8.0-windows/VoiceHubComponent.dll</code> 与 <code>cipx/VoiceHubComponent.cipx</code>。注意：PluginSdk 末步用 <code>pwsh</code> 跑 MD5 校验脚本，本机若无 PowerShell 7 会报 9009，但不影响 DLL / 插件包；用 <code>powershell</code> 手动补跑 <code>generate-md5.ps1</code> 即可。</p>
+  </div>
+  <div class="card noteline">
+    <p><b>本地验证</b></p>
+    <p>需要一个运行中的 VoiceHub 服务端（广播接口就绪）。启动后，用任一账号开播，再访问以下接口核对字段是否与上方契约一致：</p>
+    <pre><code>GET /api/music/broadcast        # 轮询快照
+GET /api/music/websocket        # SSE，事件 broadcast_state</code></pre>
+    <p>确认 <code>scheduleId</code> / <code>position</code> / <code>isPlaying</code> / <code>nextUp</code> / <code>listeners</code> 字段齐全后，再在 ClassIsland 端观察大屏叠加层是否按预期出现 / 消失。</p>
+  </div>
+
+  <!-- 9. 验收 -->
+  <h2>九、验收清单</h2>
+  <div class="card okline">
+    <ul>
+      <li>有人在播 → 命中排期出现脉动徽标 + 进度条，进度每秒在走。</li>
+      <li>停播 → 标记消失，界面回到改动前。</li>
+      <li>老服务端（不含新字段）→ 界面与改动前一致，无异常日志。</li>
+      <li>拔网 30 秒 → 不崩、不复位排期，恢复后自动恢复。</li>
+      <li>播控人暂停 → 标记保留但不脉动。</li>
+      <li>教室机 CPU 不因新通道明显上升（不每秒请求）。</li>
+    </ul>
+  </div>
+
+  <footer>
+    配套规范：<code>AI-必读-广播正在播放-桥接提示词.md</code> · <code>AI-必读-二次开发说明.md</code>。
+    本功能与集控侧不共享代码，仅共享数据契约；任何契约改动须双向同步检查。
+  </footer>
+
+</div>
+</body>
+</html>
