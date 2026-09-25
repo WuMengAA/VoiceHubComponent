@@ -165,7 +165,6 @@ namespace VoiceHubComponent.Views
             Settings.ShowCover = true;
             Settings.ShowTranslation = true;
             Settings.ShowRomanization = false;
-            Settings.WordByWord = true;
             Settings.EnableLyricUpgrade = true;
             Settings.EnableNowPlaying = true;
             ApiUrlTextBox.Text = DefaultApiUrl;
@@ -177,7 +176,6 @@ namespace VoiceHubComponent.Views
             ShowCoverCheckBox.IsChecked = true;
             ShowTranslationCheckBox.IsChecked = true;
             ShowRomanizationCheckBox.IsChecked = false;
-            WordByWordCheckBox.IsChecked = true;
             EnableLyricUpgradeCheckBox.IsChecked = true;
             EnableNowPlayingCheckBox.IsChecked = true;
             this.ShowSuccessToast("已重置为默认配置");
@@ -215,7 +213,6 @@ namespace VoiceHubComponent.Views
             Settings.ShowCover = ShowCoverCheckBox.IsChecked == true;
             Settings.ShowTranslation = ShowTranslationCheckBox.IsChecked == true;
             Settings.ShowRomanization = ShowRomanizationCheckBox.IsChecked == true;
-            Settings.WordByWord = WordByWordCheckBox.IsChecked == true;
             Settings.EnableLyricUpgrade = EnableLyricUpgradeCheckBox.IsChecked == true;
             Settings.EnableNowPlaying = EnableNowPlayingCheckBox.IsChecked == true;
             return true;
