@@ -74,6 +74,12 @@ dotnet build -c Release
 - 目标框架 `net8.0-windows`，SDK 包 `ClassIsland.PluginSdk`（`<ClassIslandPluginSdkVersion>`，官方用 2.0.0.1）。
 - 本机 ClassIsland 为 2.1.0.1，实测包在 `~/.nuget/packages/classisland.core/2.1.0.1/`。
 - `CreateCipx=true` 会额外产出 `.cipx` 插件包。
+- 构建末步（`CreateCipx`）会用 PS 脚本给插件包生成 MD5 清单 `cipx/checksums.md`。
+  插件 SDK 把解释器写死为默认的 PS7 命令，机器 PATH 里没有它时会报 9009 ——
+  **包其实已经打出来了，只是整条命令被判失败**。本工程已在 `VoiceHubComponent.csproj`
+  里加了探测：PATH 里没有 PS7 就退回系统自带的 5.1 版宿主，所以正常构建不需要
+  手工补跑脚本；要显式指定解释器就传 `-p:<SDK属性名>=<路径>`。
+- `cipx/` 是**入库**的（`.cipx` + `checksums.md`），改动源码后记得随提交一起更新。
 - 部署：把 `VoiceHubComponent.dll` + `manifest.yml` + `icon.png` 放进
   `D:\Classlsland\data\Plugins\`（**数据目录**下的 Plugins，不是 `%APPDATA%`）。
 
