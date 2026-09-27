@@ -22,6 +22,26 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
+  <!-- 构建末步：PluginSdk 的 CreateCipx 会用 PowerShell 给插件包生成 MD5 清单
+       （ClassIsland.PluginSdk.targets 里的 `$(PowershellBinaryName)`，默认写死 pwsh）。
+       没有 PowerShell 7 的机器（常见于只带系统 Windows PowerShell 5.1 的机器）会拿到
+       退出码 9009 —— 包能打出来，但整条 build 命令被判失败，还得事后手动补跑脚本。
+       这里在打包装前探一次 pwsh，不在 PATH 就退回系统自带的 powershell，
+       让 `dotnet build -c Release` 一条命令跑完整条链路。
+       想强制用某个解释器：dotnet build -c Release -p:PowershellBinaryName=<path> -->
+  <Target Name="ProbePowershellBinaryForCipx"
+          BeforeTargets="CreateCipx"
+          Condition="'$(OS)' == 'Windows_NT'">
+    <!-- 直接问解释器本身最可靠（PATH 扫描会被其它含 pwsh 字样的路径干扰） -->
+    <Exec Command="pwsh -v" ContinueOnError="true" IgnoreExitCode="true" />
+    <!-- 注意：NuGet 的 ClassIsland.PluginSdk.targets 在项目体之后导入，会把本属性重写回
+         pwsh，所以这里不能判断「是否为空」，要同时放行被显式指定成 pwsh 的情况，
+         这样 `dotnet build -p:PowershellBinaryName=<path>` 仍能手动指定解释器。 -->
+    <PropertyGroup Condition="'$(PowershellBinaryName)' == '' OR '$(PowershellBinaryName)' == 'pwsh'">
+      <PowershellBinaryName>powershell</PowershellBinaryName>
+    </PropertyGroup>
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="ClassIsland.PluginSdk" Version="$(ClassIslandPluginSdkVersion)">
       <ExcludeAssets>runtime; native</ExcludeAssets>

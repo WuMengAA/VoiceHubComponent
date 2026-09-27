@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+    branches: [main, upstream/v2]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 编译校验
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: 还原并构建
+        run: dotnet build -c Release
+
+      - name: 上传插件包
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceHubComponent
+          path: |
+            bin/Release/net8.0-windows/VoiceHubComponent.dll
+            cipx/VoiceHubComponent.cipx
+          if-no-files-found: error
