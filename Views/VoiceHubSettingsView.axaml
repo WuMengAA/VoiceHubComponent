@@ -6,8 +6,10 @@
                 xmlns:ci="http://classisland.tech/schemas/xaml/core"
                 xmlns:fluent="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
                 xmlns:models="clr-namespace:VoiceHubComponent.Models">
-    <ScrollViewer>
-        <StackPanel Margin="16" Spacing="8">
+    <TabControl>
+        <TabItem Header="设置">
+            <ScrollViewer>
+                <StackPanel Margin="16" Spacing="8">
             <TextBlock Text="VoiceHub 插件设置"
                        FontSize="20"
                        FontWeight="SemiBold"
@@ -149,6 +151,67 @@
                         Click="ResetButton_Click"/>
             </StackPanel>
 
-        </StackPanel>
-    </ScrollViewer>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <TabItem Header="帮助">
+            <ScrollViewer>
+                <StackPanel Margin="16" Spacing="12">
+                    <TextBlock Text="VoiceHub 帮助" FontSize="20" FontWeight="SemiBold" />
+                    <TextBlock TextWrapping="Wrap" FontSize="13"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                        完整文档托管在校网站点的「点歌帮助」页，点击下方按钮在浏览器打开；下方为离线速览。
+                    </TextBlock>
+
+                    <fluent:SettingsExpander Header="帮助文档地址"
+                                             Description="在线帮助文档所在的网站根地址（站点 /voicehub/help）。留空则使用默认站点。"
+                                             IconSource="{ci:FluentIconSource &#xE8A1;}">
+                        <fluent:SettingsExpander.Footer>
+                            <TextBox x:Name="HelpDocUrlTextBox"
+                                     Text="{Binding HelpDocUrl}"
+                                     Watermark="https://www.245959623.xyz"
+                                     Width="320"
+                                     VerticalAlignment="Center" />
+                        </fluent:SettingsExpander.Footer>
+                    </fluent:SettingsExpander>
+
+                    <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                            CornerRadius="8" Padding="12">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="🎧 点歌同学速览" FontWeight="SemiBold" FontSize="14" />
+                            <TextBlock xml:space="preserve" FontSize="13" TextWrapping="Wrap">· 在哪点歌：见学校广播站公告的「点歌入口」
+· 点歌：写清 歌名 / 歌手 / 想说的话 / 点给谁
+· 查状态：我的点歌 → 待审核 / 已通过 / 已播放
+· 不能点：违规、低俗、侵权、攻击性，或泄露他人隐私
+· 有问题：联系广播站客服 / 投诉渠道</TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                            CornerRadius="8" Padding="12">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="📻 广播站成员速览" FontWeight="SemiBold" FontSize="14" />
+                            <TextBlock xml:space="preserve" FontSize="13" TextWrapping="Wrap">· 每日：收歌 → 审核 → 排单 → 播前检查 → 播放 → 记录
+· 审核：通过 / 驳回 / 待补充
+· 播前检查：歌名·音源·版权·敏感词·音量·时间
+· 红线：不播未审歌、不播侵权歌、不泄露同学信息
+· 误播禁曲：立即停播并上报</TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="OpenHelpStudentButton" Content="打开同学须知" Click="OpenHelpStudent_Click" />
+                        <Button x:Name="OpenHelpStaffButton" Content="打开发员须知" Click="OpenHelpStaff_Click" />
+                        <Button x:Name="OpenHelpOnepagerButton" Content="打开一页纸" Click="OpenHelpOnepager_Click" />
+                    </StackPanel>
+
+                    <TextBlock TextWrapping="Wrap" FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                        提示：具体点歌入口、开放时间、播放时段与客服渠道，以学校广播站实际公告为准。
+                    </TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+    </TabControl>
 </ci:ComponentBase>

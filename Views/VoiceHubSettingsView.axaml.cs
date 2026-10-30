@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using VoiceHubComponent.Models;
+using VoiceHubComponent.Services;
 using ClassIsland.Core.Abstractions.Controls;
 using ClassIsland.Core.Helpers.UI;
 using FluentAvalonia.UI.Controls;
@@ -14,7 +16,9 @@ namespace VoiceHubComponent.Views
     public partial class VoiceHubSettingsView : ComponentBase<VoiceHubSettings>
     {
         private const string DefaultApiUrl = "https://voicehub.lao-shui.top/api/songs/public";
-        private readonly HttpClient _httpClient = new HttpClient();
+        private const string DefaultHelpDocUrl = "https://www.245959623.xyz";
+        private readonly HttpClient _httpClient =
+            VoiceHubHttp.CreateBoundedClient(TimeSpan.FromSeconds(15));
 
         public VoiceHubSettingsView()
         {
@@ -167,6 +171,7 @@ namespace VoiceHubComponent.Views
             Settings.ShowRomanization = false;
             Settings.EnableLyricUpgrade = true;
             Settings.EnableNowPlaying = true;
+            Settings.HelpDocUrl = DefaultHelpDocUrl;
             ApiUrlTextBox.Text = DefaultApiUrl;
             EnableLyricsCheckBox.IsChecked = false;
             BroadcastStartTimeTextBox.Text = "12:20:00";
@@ -178,7 +183,44 @@ namespace VoiceHubComponent.Views
             ShowRomanizationCheckBox.IsChecked = false;
             EnableLyricUpgradeCheckBox.IsChecked = true;
             EnableNowPlayingCheckBox.IsChecked = true;
+            HelpDocUrlTextBox.Text = DefaultHelpDocUrl;
             this.ShowSuccessToast("已重置为默认配置");
+        }
+
+        private async void OpenHelpStudent_Click(object sender, RoutedEventArgs e)
+            => await OpenHelpAsync("student");
+
+        private async void OpenHelpStaff_Click(object sender, RoutedEventArgs e)
+            => await OpenHelpAsync("staff");
+
+        private async void OpenHelpOnepager_Click(object sender, RoutedEventArgs e)
+            => await OpenHelpAsync("onepager");
+
+        /// <summary>
+        /// 用系统默认浏览器打开站点上的在线帮助文档（零额外依赖，走 Process shell 启动）。
+        ///  anchor: student / staff / onepager，对应 /voicehub/help 的三个标签页。
+        /// </summary>
+        private async Task OpenHelpAsync(string anchor)
+        {
+            try
+            {
+                var baseUrl = (Settings.HelpDocUrl ?? string.Empty).Trim().TrimEnd('/');
+                if (string.IsNullOrEmpty(baseUrl))
+                {
+                    baseUrl = DefaultHelpDocUrl;
+                }
+
+                var url = string.IsNullOrEmpty(anchor)
+                    ? $"{baseUrl}/voicehub/help"
+                    : $"{baseUrl}/voicehub/help#{anchor}";
+
+                await Task.Run(() =>
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorToast($"打开帮助失败：{ex.Message}");
+            }
         }
 
         /// <summary>
@@ -215,6 +257,7 @@ namespace VoiceHubComponent.Views
             Settings.ShowRomanization = ShowRomanizationCheckBox.IsChecked == true;
             Settings.EnableLyricUpgrade = EnableLyricUpgradeCheckBox.IsChecked == true;
             Settings.EnableNowPlaying = EnableNowPlayingCheckBox.IsChecked == true;
+            Settings.HelpDocUrl = HelpDocUrlTextBox.Text?.Trim() ?? string.Empty;
             return true;
         }
     }

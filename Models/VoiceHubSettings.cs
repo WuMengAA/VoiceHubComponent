@@ -23,6 +23,7 @@ namespace VoiceHubComponent.Models
         private bool _showRomanization = false;
         private bool _enableLyricUpgrade = true;
         private bool _enableNowPlaying = true;
+        private string _helpDocUrl = "https://www.245959623.xyz";
         private bool _isLoaded = false;
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -273,6 +274,29 @@ namespace VoiceHubComponent.Models
             }
         }
 
+        /// <summary>
+        /// 帮助文档所在的网站地址（站点 /voicehub/help）。用于「帮助」页打开在线文档；留空则回落到默认站点。
+        /// </summary>
+        public string HelpDocUrl
+        {
+            get
+            {
+                EnsureLoaded();
+                return _helpDocUrl;
+            }
+            set
+            {
+                EnsureLoaded();
+                var normalized = value?.Trim() ?? string.Empty;
+                if (_helpDocUrl != normalized)
+                {
+                    _helpDocUrl = normalized;
+                    OnPropertyChanged();
+                    SaveSettings();
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public VoiceHubSettings()
@@ -368,6 +392,15 @@ namespace VoiceHubComponent.Models
                     if (jsonDocument.RootElement.TryGetProperty("EnableNowPlaying", out var enableNowPlayingElement))
                     {
                         _enableNowPlaying = enableNowPlayingElement.GetBoolean();
+                    }
+
+                    if (jsonDocument.RootElement.TryGetProperty("HelpDocUrl", out var helpDocUrlElement))
+                    {
+                        var helpDocUrl = helpDocUrlElement.GetString();
+                        if (!string.IsNullOrWhiteSpace(helpDocUrl))
+                        {
+                            _helpDocUrl = helpDocUrl.Trim();
+                        }
                     }
                 }
             }

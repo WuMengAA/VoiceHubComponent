@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园广播点歌·同学须知</title>
+<style>
+  :root { --fg:#1f2430; --muted:#5b6472; --line:#e3e7ee; --brand:#3b6ef5; --warn:#c0392b; --ok:#1e8e5a; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:20px; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--fg); line-height:1.65; background:#fafbfc; }
+  .wrap { max-width:760px; margin:0 auto; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:14px; margin-bottom:18px; }
+  h2 { font-size:17px; margin:26px 0 10px; padding-left:9px; border-left:4px solid var(--brand); }
+  .kv { background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:10px 0; }
+  .kv b { display:inline-block; min-width:84px; color:var(--muted); }
+  ol.steps { margin:8px 0; padding-left:22px; }
+  ol.steps li { margin:6px 0; }
+  table { width:100%; border-collapse:collapse; margin:10px 0; font-size:14px; background:#fff; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f3f6fc; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px; }
+  .yes { background:#e7f6ee; color:var(--ok); }
+  .no { background:#fdecea; color:var(--warn); }
+  .check { background:#fff; border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .check label { display:block; margin:5px 0; font-size:14px; }
+  .faq { background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 14px; }
+  .faq dt { font-weight:600; margin-top:10px; }
+  .faq dd { margin:4px 0 0; color:var(--muted); }
+  .tpl { background:#0f172a; color:#e2e8f0; border-radius:10px; padding:14px; font-size:13px; white-space:pre-wrap; line-height:1.7; }
+  .nav { margin-top:28px; padding-top:14px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); }
+  .nav a { color:var(--brand); text-decoration:none; }
+  .ph { color:#b45309; background:#fef3c7; padding:0 4px; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>校园广播点歌·同学须知</h1>
+  <div class="sub">给收听者 / 点歌同学看 · 一页能看完</div>
+
+  <h2>一、基本信息</h2>
+  <div class="kv">
+    <div><b>在哪点歌</b><span class="ph">{{点歌入口}}</span></div>
+    <div><b>开放时间</b><span class="ph">{{点歌开放时间}}</span></div>
+    <div><b>播放时段</b><span class="ph">{{播放时段}}</span></div>
+    <div><b>审核时限</b><span class="ph">{{审核时限}}</span></div>
+  </div>
+
+  <h2>二、点歌步骤</h2>
+  <ol class="steps">
+    <li>打开<span class="ph">{{点歌入口}}</span>，登录你的账号。</li>
+    <li>搜索或输入想点的歌，<b>写清下面四项</b>：歌名、歌手、想说的话、点给谁。</li>
+    <li>提交后等审核；到<span class="ph">{{审核时限}}</span>内可在"我的点歌"查看状态。</li>
+  </ol>
+
+  <h2>三、能点 / 不能点</h2>
+  <table>
+    <tr><th style="width:50%">可以点</th><th>不要点</th></tr>
+    <tr>
+      <td><span class="tag yes">OK</span> 正版、曲风正常的歌曲<br>想送给同学/老师的话</td>
+      <td><span class="tag no">禁</span> 违规、低俗、侵权、攻击性歌曲<br>未标明歌手/歌名的"无名曲"<br>含个人隐私信息的点歌</td>
+    </tr>
+  </table>
+
+  <h2>四、被驳回常见原因</h2>
+  <ul>
+    <li>歌名/歌手写错或查不到音源；</li>
+    <li>歌词或内容涉及敏感词、低俗、侵权；</li>
+    <li>点给了不存在的人或泄露他人信息；</li>
+    <li>同一首歌短时间内重复点太多。</li>
+  </ul>
+
+  <h2>五、怎么查有没有被选中</h2>
+  <p>在<span class="ph">{{点歌入口}}</span>的"我的点歌"里看状态：<b>待审核 → 已通过（排队中）→ 已播放</b>。通过的歌会按播放时段安排，不一定当天播。</p>
+
+  <h2>六、隐私和版权提醒</h2>
+  <ul>
+    <li>只填必要的点歌信息，<b>不收集无关隐私</b>。</li>
+    <li>请点正版歌曲；侵权、搬运音源不予播放。</li>
+    <li>广播站/第三方负责审核与播放，<b>校方负责监管</b>。</li>
+  </ul>
+
+  <h2>七、有问题找谁</h2>
+  <div class="kv"><b>客服/投诉</b><span class="ph">2498517208@qq.com</span></div>
+
+  <h2>八、常见问题</h2>
+  <dl class="faq">
+    <dt>1. 点错了能撤回吗？</dt><dd>在"我的点歌"里未审核前可撤销；已审核需联系客服。</dd>
+    <dt>2. 为什么一直"待审核"？</dt><dd>审核在<span class="ph">{{审核时限}}</span>内完成，高峰期会稍慢，请耐心等。</dd>
+    <dt>3. 能指定几点播吗？</dt><dd>不能精确指定，按播放时段和排队顺序安排。</dd>
+    <dt>4. 被驳回能再点吗？</dt><dd>可以，修改后重新提交；同一问题反复提交仍会被驳。</dd>
+    <dt>5. 想点的歌搜不到怎么办？</dt><dd>确认歌名/歌手拼写，或换一个版本；仍不行请联系客服。</dd>
+  </dl>
+
+  <h2>九、点歌模板（直接复制填）</h2>
+  <div class="tpl">【点歌】
+歌名：________
+歌手：________
+点给：________（同学/老师/班级）
+想说：________
+（例：点给初三(2)班小王，考试加油！）</div>
+
+  <div class="nav">
+    相关文档：
+    <a href="song-request-staff-guide.html">广播站成员操作与维护须知 →</a> ·
+    <a href="song-request-onepager.html">一页纸合并版 →</a>
+  </div>
+</div>
+</body>
+</html>

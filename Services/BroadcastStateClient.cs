@@ -29,7 +29,7 @@ namespace VoiceHubComponent.Services
 
         private readonly Func<Uri?> _originProvider;
         private readonly ILogger? _logger;
-        private readonly HttpClient _httpClient = new() { Timeout = Timeout.InfiniteTimeSpan };
+        private readonly HttpClient _httpClient = VoiceHubHttp.CreateInfiniteClient();
         private readonly CancellationTokenSource _cts = new();
         private Task? _runTask;
         private bool _started;

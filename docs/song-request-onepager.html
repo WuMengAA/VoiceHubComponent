@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园广播点歌·一页纸合并版</title>
+<style>
+  :root { --fg:#1f2430; --muted:#5b6472; --line:#e3e7ee; --brand:#3b6ef5; --warn:#c0392b; --ok:#1e8e5a; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:18px; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; color:var(--fg); line-height:1.6; background:#fafbfc; }
+  .wrap { max-width:980px; margin:0 auto; }
+  h1 { font-size:20px; margin:0 0 4px; text-align:center; }
+  .sub { text-align:center; color:var(--muted); font-size:13px; margin-bottom:16px; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:640px){ .cols { grid-template-columns:1fr; } }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .card h2 { font-size:15px; margin:0 0 8px; padding:6px 10px; border-radius:8px; color:#fff; }
+  .student h2 { background:var(--brand); }
+  .staff h2 { background:var(--ok); }
+  .card ol, .card ul { margin:6px 0; padding-left:20px; font-size:13.5px; }
+  .card li { margin:5px 0; }
+  .foot { margin-top:16px; background:#0f172a; color:#e2e8f0; border-radius:12px; padding:14px; font-size:13.5px; }
+  .foot b { color:#93c5fd; }
+  .ph { color:#b45309; background:#fef3c7; padding:0 4px; border-radius:4px; }
+  .nav { margin-top:18px; text-align:center; font-size:13px; color:var(--muted); }
+  .nav a { color:var(--brand); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>校园广播点歌 · 一页纸</h1>
+  <div class="sub">左边点歌同学怎么做，右边广播站成员怎么做 · 适合贴广播站 / 发班级群 / 公众号</div>
+
+  <div class="cols">
+    <div class="card student">
+      <h2>点歌同学怎么做</h2>
+      <ol>
+        <li>打开<span class="ph">{{点歌入口}}</span>，登录账号。</li>
+        <li>搜歌，写清：歌名、歌手、想说的话、点给谁。</li>
+        <li>提交，等<span class="ph">{{审核时限}}</span>内审核。</li>
+        <li>在"我的点歌"查状态：待审核→已通过→已播放。</li>
+      </ol>
+      <ul>
+        <li><b>开放时间</b>：<span class="ph">{{点歌开放时间}}</span></li>
+        <li><b>播放时段</b>：<span class="ph">{{播放时段}}</span></li>
+        <li><b>能点</b>：正版、曲风正常的歌 + 想说的话。</li>
+        <li><b>不能点</b>：违规/低俗/侵权/攻击性，或泄露他人隐私。</li>
+        <li><b>被驳常见</b>：歌名歌手错、音源失效、敏感词、重复刷。</li>
+        <li><b>有问题</b>：<span class="ph">2498517208@qq.com</span></li>
+      </ul>
+    </div>
+
+    <div class="card staff">
+      <h2>广播站成员怎么做</h2>
+      <ol>
+        <li><b>收歌</b>：到点歌系统取当日提交。</li>
+        <li><b>审核</b>：通过 / 驳回 / 待补充。</li>
+        <li><b>排单</b>：按播放时段排入队列。</li>
+        <li><b>播前检查</b>：歌名·音源·版权·敏感词·音量·时间。</li>
+        <li><b>播放</b> → <b>记录</b>：留痕歌单/审核/播放。</li>
+      </ol>
+      <ul>
+        <li><b>每日</b>：设备自检、网络在线、备份记录。</li>
+        <li><b>账号</b>：仅授权成员登录，密码每月换。</li>
+        <li><b>故障</b>：没声查功放/音源；放错立即切下一首；<b>误播禁曲马上停播并上报</b>。</li>
+        <li><b>交接</b>：歌单/队列/异常当面说清，双方签字。</li>
+        <li><b>红线</b>：不播未审歌、不播侵权歌、不泄露同学信息。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>故障 / 投诉 / 应急联系方式</b><br>
+    · 点歌问题 & 投诉：<span class="ph">2498517208@qq.com</span><br>
+    · 播出故障应急：广播站值班电话 / 校方监管联系人（见站内值班表）<br>
+    · 误播禁曲：立即停播 → 记录时间曲目 → 按校方流程上报
+  </div>
+
+  <div class="nav">
+    完整版：
+    <a href="song-request-student-guide.html">同学须知 →</a>
+    <a href="song-request-staff-guide.html">成员须知 →</a>
+  </div>
+</div>
+</body>
+</html>

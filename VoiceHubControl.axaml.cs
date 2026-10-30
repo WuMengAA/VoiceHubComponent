@@ -37,7 +37,8 @@ namespace VoiceHubComponent
     public partial class VoiceHubControl : ComponentBase<VoiceHubSettings>
     {
         private static event Func<Task>? ManualRefreshRequested;
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient =
+            VoiceHubHttp.CreateBoundedClient(TimeSpan.FromSeconds(10));
         private readonly SemaphoreSlim _refreshLock = new(1, 1);
         private readonly ILogger<VoiceHubControl>? _logger = IAppHost.TryGetService<ILogger<VoiceHubControl>>();
         private ComponentState _currentState = ComponentState.Loading;
@@ -135,9 +136,6 @@ namespace VoiceHubComponent
                 _logger);
             ManualRefreshRequested += HandleManualRefreshRequestedAsync;
             DetachedFromVisualTree += VoiceHubControl_DetachedFromVisualTree;
-
-            // 设置HTTP客户端超时
-            _httpClient.Timeout = TimeSpan.FromSeconds(10);
 
             // 广播「正在播放」叠加层：独立后台通道（SSE + 轮询），不干扰主刷新节奏。
             // 默认按 EnableNowPlaying 开关决定是否显示，连接本身常驻。
