@@ -27,7 +27,7 @@
                 </fluent:SettingsExpander.Footer>
             </fluent:SettingsExpander>
 
-            <TextBlock Text="默认: https://voicehub.lao-shui.top/api/songs/public"
+            <TextBlock Text="默认: https://voicehub-2026.netlify.app/api/songs/public"
                        FontSize="12"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                        Margin="16,0,0,0"/>

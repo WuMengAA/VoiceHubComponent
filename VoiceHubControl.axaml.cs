@@ -340,7 +340,7 @@ namespace VoiceHubComponent
             // 使用配置的API地址
             var apiUrl = !string.IsNullOrEmpty(Settings.ApiUrl)
                 ? Settings.ApiUrl
-                : "https://voicehub.lao-shui.top/api/songs/public";
+                : "https://voicehub-2026.netlify.app/api/songs/public";
 
             var jsonResponse = await _httpClient.GetStringAsync(apiUrl);
             var songItems = JsonSerializer.Deserialize<List<SongItem>>(jsonResponse);

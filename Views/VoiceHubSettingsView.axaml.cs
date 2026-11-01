@@ -15,7 +15,7 @@ namespace VoiceHubComponent.Views
 {
     public partial class VoiceHubSettingsView : ComponentBase<VoiceHubSettings>
     {
-        private const string DefaultApiUrl = "https://voicehub.lao-shui.top/api/songs/public";
+        private const string DefaultApiUrl = "https://voicehub-2026.netlify.app/api/songs/public";
         private const string DefaultHelpDocUrl = "https://www.245959623.xyz";
         private readonly HttpClient _httpClient =
             VoiceHubHttp.CreateBoundedClient(TimeSpan.FromSeconds(15));

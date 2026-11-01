@@ -12,7 +12,7 @@ namespace VoiceHubComponent.Models
     /// </summary>
     public class VoiceHubSettings : INotifyPropertyChanged
     {
-        private string _apiUrl = "https://voicehub.lao-shui.top/api/songs/public";
+        private string _apiUrl = "https://voicehub-2026.netlify.app/api/songs/public";
         private bool _enableLyrics = false;
         private string _broadcastStartTime = "12:20:00";
         private string _neteaseCookie = string.Empty;
